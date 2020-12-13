@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "106660034934",
+    "project_id": "practical-7bits",
+    "storage_bucket": "practical-7bits.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106660034934:android:22f683c629e805377ba257",
+        "android_client_info": {
+          "package_name": "com.example.practical_7bits"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "106660034934-l187iuf71fqahh0glgr9eq8tuq988270.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNlZOAY0E_M-5HUhWb_CRY8jRB9GPZHHQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "106660034934-l187iuf71fqahh0glgr9eq8tuq988270.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
