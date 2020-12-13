@@ -24,54 +24,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () => _showPicker(context),
-                child: CircleAvatar(
-                  child: _image!=null ? ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Image.file(
-                        File(_image.path),
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.fitHeight,
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.circular(100)),
-                      width: 100,
-                      height: 100,
-                      child: Icon(
-                        Icons.camera_alt,
-                        color: Colors.grey[800],
-                      ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                GestureDetector(
+                  onTap: () => _showPicker(context),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: CircleAvatar(
+                      child: _image != null
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.file(
+                                File(_image.path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.fitHeight,
+                              ),
+                            )
+                          : Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[200],
+                                  borderRadius: BorderRadius.circular(100)),
+                              width: 150,
+                              height: 150,
+                              child: Icon(
+                                Icons.camera_alt,
+                                color: Colors.grey[800],
+                              ),
+                            ),
                     ),
+                  ),
                 ),
-              ),
-              TextField(
-                controller: _nameController,
-              ),
-              TextField(
-                controller: _mobileNumberController,
-                keyboardType: TextInputType.phone,
-              ),
-              TextField(
-                controller: _mailAddressController,
-                keyboardType: TextInputType.emailAddress,
-              ),
-              FlatButton(
-                child: Text("Logout"),
-                textColor: Colors.white,
-                color: Colors.blue,
-                onPressed: () {
-                  FirebaseAuth.instance.signOut();
-                },
-              )
-            ],
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: TextField(
+                    controller: _nameController,
+                    decoration: InputDecoration(
+                        labelText: 'Name',
+                        labelStyle: TextStyle(letterSpacing: 1.0),
+                        prefixIcon: Icon(Icons.person),
+                        border: OutlineInputBorder(),
+                        focusColor: Colors.blue,
+                        hintText: "Enter your name"),
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600),
+                    maxLength: 30,
+                    maxLines: 1,
+                    maxLengthEnforced: true,
+                    // Only numbers can be entered
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: TextField(
+                    controller: _mobileNumberController,
+                    decoration: InputDecoration(
+                        labelText: 'Phone Number',
+                        labelStyle: TextStyle(letterSpacing: 1.0),
+                        prefixIcon: Icon(Icons.phone),
+                        border: OutlineInputBorder(),
+                        focusColor: Colors.blue,
+                        hintText: "Enter your number"),
+                    keyboardType: TextInputType.phone,
+                    style: TextStyle(
+
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600),
+                    maxLength: 16,
+                    maxLines: 1,
+                    maxLengthEnforced: true,
+                    // Only numbers can be entered
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.75,
+                  child: TextField(
+                    controller: _mailAddressController,
+                    decoration: InputDecoration(
+                        labelText: 'Email',
+                        labelStyle: TextStyle(letterSpacing: 1.0),
+                        prefixIcon: Icon(Icons.email),
+                        border: OutlineInputBorder(),
+                        focusColor: Colors.blue,
+                        hintText: "Enter your email"),
+                    keyboardType: TextInputType.emailAddress,
+                    style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.w600),
+                    maxLength: 40,
+                    maxLines: 1,
+                    maxLengthEnforced: true,
+                    // Only numbers can be entered
+                  ),
+                ),
+                FlatButton(
+                  child: Text("Logout"),
+                  textColor: Colors.white,
+                  color: Colors.blue,
+                  onPressed: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                )
+              ],
+            ),
           ),
         ));
   }
@@ -91,14 +149,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
-                    onTap: () {
-                      _imgFromCamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
                 ],
               ),
             ),
@@ -106,19 +156,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         });
   }
 
-  _imgFromCamera() async {
-    final image = await ImagePicker().getImage(
-        source: ImageSource.camera, imageQuality: 50);
-
-    setState(() {
-     _image = image;
-    });
-  }
-
   _imgFromGallery() async {
-    PickedFile image = await ImagePicker().getImage(
-        source: ImageSource.gallery, imageQuality: 50);
-
+    PickedFile image = await ImagePicker()
+        .getImage(source: ImageSource.gallery, imageQuality: 50);
     setState(() {
       _image = image;
     });
