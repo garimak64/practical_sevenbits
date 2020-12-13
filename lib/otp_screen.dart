@@ -15,6 +15,10 @@ class OtpScreen extends StatefulWidget {
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _smsCodeController = TextEditingController();
   final FirebaseAuth auth = FirebaseAuth.instance;
+  static const _timerDuration = 30;
+  StreamController _timerStream = new StreamController<int>();
+  int timerCounter;
+  Timer _resendCodeTimer;
   String verificationCode;
   String errorText;
   int resendToken = -1;
@@ -91,7 +95,9 @@ class _OtpScreenState extends State<OtpScreen> {
                               MaterialPageRoute(
                                   builder: (context) => ProfileScreen()));
                         } else {
-                          print("Error");
+                          setState(() {
+                            errorText = "Incorrect Code";
+                          });
                         }
                       } else {
                         setState(() {
@@ -136,19 +142,17 @@ class _OtpScreenState extends State<OtpScreen> {
 
   activeCounter() {
     _resendCodeTimer = new Timer.periodic(Duration(seconds: 1), (Timer timer) {
-      if (_timerDuration - timer.tick > 0)
-        _timerStream.sink.add(_timerDuration - timer.tick);
-      else {
-        _timerStream.sink.add(0);
-        _resendCodeTimer.cancel();
+      if(!_timerStream.isClosed) {
+        if (_timerDuration - timer.tick > 0)
+          _timerStream.sink.add(_timerDuration - timer.tick);
+        else {
+          _timerStream.sink.add(0);
+          _resendCodeTimer.cancel();
+        }
       }
+
     });
   }
-
-  static const _timerDuration = 30;
-  StreamController _timerStream = new StreamController<int>();
-  int timerCounter;
-  Timer _resendCodeTimer;
 
   Future<void> _loginUser({int resendToken}) async {
     auth.verifyPhoneNumber(
@@ -164,7 +168,7 @@ class _OtpScreenState extends State<OtpScreen> {
           }
         },
         verificationFailed: (FirebaseAuthException e) {
-          print("Error");
+          print(e);
         },
         codeSent: (String verificationId, int resendToken) {
           verificationCode = verificationId;
@@ -177,5 +181,13 @@ class _OtpScreenState extends State<OtpScreen> {
 
   bool _verifyCode(String smsCode) {
     return smsCode != null && smsCode.length == 6;
+  }
+
+  @override
+  void dispose() {
+    _smsCodeController.dispose();
+    _timerStream.close();
+    _resendCodeTimer.cancel();
+    super.dispose();
   }
 }

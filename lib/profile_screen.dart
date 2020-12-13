@@ -38,8 +38,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               borderRadius: BorderRadius.circular(100),
                               child: Image.file(
                                 File(_image.path),
-                                width: 100,
-                                height: 100,
                                 fit: BoxFit.fitHeight,
                               ),
                             )
@@ -47,8 +45,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               decoration: BoxDecoration(
                                   color: Colors.grey[200],
                                   borderRadius: BorderRadius.circular(100)),
-                              width: 150,
-                              height: 150,
+                              width: 400,
+                              height: 400,
                               child: Icon(
                                 Icons.camera_alt,
                                 color: Colors.grey[800],
@@ -126,6 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   color: Colors.blue,
                   onPressed: () {
                     FirebaseAuth.instance.signOut();
+                    Navigator.of(context).popUntil((route) => route.isFirst);
                   },
                 )
               ],
@@ -162,5 +161,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _image = image;
     });
+  }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+
   }
 }
