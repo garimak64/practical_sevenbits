@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:practical_7bits/otp_screen.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,22 +90,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-      
-            ButtonTheme(
-              minWidth: MediaQuery.of(context).size.width * 0.40,
-              height: 35.0,
-                          child: FlatButton(
-                onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        OtpScreen(_phoneNumberController.text.trim()),
-                  ));
-                },
-                child: Text("Send OTP", style: TextStyle(fontSize: 18.0),),
-                textColor: Colors.white,
-                color: Colors.blue,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ButtonTheme(
+                  minWidth: MediaQuery.of(context).size.width * 0.30,
+                  height: 35.0,
+                  child: FlatButton(
+                    onPressed:  ()async{
+                      _phoneNumberController.text = await SmsAutoFill().hint;
+                    },
+                    child: Text("Autofill", style: TextStyle(fontSize: 18.0),),
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                  ),
+                ),
+                SizedBox(width: MediaQuery.of(context).size.width * 0.05,),
+                ButtonTheme(
+                  minWidth: MediaQuery.of(context).size.width * 0.30,
+                  height: 35.0,
+                  child: FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            OtpScreen(_phoneNumberController.text.trim()),
+                      ));
+                    },
+                    child: Text("Send OTP", style: TextStyle(fontSize: 18.0),),
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
             ),
+
+
             Spacer(flex: 3,)
           ],
         )));

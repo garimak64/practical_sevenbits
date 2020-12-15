@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:practical_7bits/FirebaseHelper.dart';
 import 'package:practical_7bits/profile_screen.dart';
 
 class OtpScreen extends StatefulWidget {
@@ -14,7 +15,11 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController _smsCodeController = TextEditingController();
-  final FirebaseAuth auth = FirebaseAuth.instance;
+  static const _timerDuration = 30;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  StreamController _timerStream = new StreamController<int>();
+  int timerCounter;
+  Timer _resendCodeTimer;
   String verificationCode;
   String errorText;
   int resendToken = -1;
@@ -22,13 +27,14 @@ class _OtpScreenState extends State<OtpScreen> {
   @override
   void initState() {
     super.initState();
+    _loginUser();
     activeCounter();
   }
 
   @override
   Widget build(BuildContext context) {
-    _loginUser();
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("OTP Screen"),
         centerTitle: true,
@@ -83,7 +89,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                 verificationId: verificationCode,
                                 smsCode: smsCode);
                         UserCredential userCredential =
-                            await auth.signInWithCredential(credential);
+                            await FirebaseHelper.auth.signInWithCredential(credential);
                         User user = userCredential.user;
                         if (user != null) {
                           Navigator.push(
@@ -145,37 +151,46 @@ class _OtpScreenState extends State<OtpScreen> {
     });
   }
 
-  static const _timerDuration = 30;
-  StreamController _timerStream = new StreamController<int>();
-  int timerCounter;
-  Timer _resendCodeTimer;
-
-  Future<void> _loginUser({int resendToken}) async {
-    auth.verifyPhoneNumber(
+  Future<void> _loginUser({int smsCode, int resendToken}) async {
+    FirebaseHelper.auth.verifyPhoneNumber(
         forceResendingToken: resendToken,
         phoneNumber: widget.phoneNumber,
         timeout: Duration(minutes: 2),
+
         verificationCompleted: (AuthCredential credential) async {
-          UserCredential result = await auth.signInWithCredential(credential);
+          UserCredential result = await FirebaseHelper.auth.signInWithCredential(credential);
           User user = result.user;
           if (user != null) {
             Navigator.push(context,
                 MaterialPageRoute(builder: (context) => ProfileScreen()));
           }
+          showSnackbar("Phone number automatically verified and user signed in: ${FirebaseHelper.auth.currentUser.uid}");
         },
         verificationFailed: (FirebaseAuthException e) {
-          print("Error");
+          setState(() {
+            errorText = "Incorrect OTP";
+          });
+          showSnackbar("Verification failed: $e");
+
         },
         codeSent: (String verificationId, int resendToken) {
+          showSnackbar('Please check your phone for the verification code.');
           verificationCode = verificationId;
           this.resendToken = resendToken;
+
         },
         codeAutoRetrievalTimeout: (String verificationId) {
+          showSnackbar('Please manually input code.');
           verificationCode = verificationId;
         });
   }
 
   bool _verifyCode(String smsCode) {
-    return smsCode != null && smsCode.length == 6;
+    return smsCode != null && smsCode.length == 6 && verificationCode != null;
   }
+
+  void showSnackbar(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
+  }
+
 }
