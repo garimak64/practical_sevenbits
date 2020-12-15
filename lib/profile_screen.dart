@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:practical_7bits/FirebaseHelper.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -124,10 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Text("Logout"),
                 textColor: Colors.white,
                 color: Colors.blue,
-                onPressed: () {
-                  FirebaseHelper.auth.signOut();
-                  Navigator.of(context).popUntil((route) => route.isFirst);
-                },
+                onPressed: () => logOut(context)
               ),
               Spacer(flex:2)
             ],
@@ -163,5 +159,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() {
       _image = image;
     });
+  }
+
+  void logOut(BuildContext context)  {
+    try {
+      final User firebaseUser = FirebaseAuth.instance.currentUser;
+
+      if (firebaseUser != null) {
+        FirebaseAuth.instance.signOut().then((value) => {
+          Navigator.popUntil(context, (route) => route.isFirst)});
+
+      }
+    } catch (e) {
+      print(e); // TODO: show dialog with error
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _mobileNumberController.dispose();
+    _mailAddressController.dispose();
+    super.dispose();
   }
 }
