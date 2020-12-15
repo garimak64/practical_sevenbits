@@ -176,15 +176,17 @@ class _OtpScreenState extends State<OtpScreen> {
     _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(message)));
   }
 
+
+  // Enable this to auto-verify the sms code.
   void _onVerificationComplete(AuthCredential credential) async {
-//    UserCredential result = await _auth.signInWithCredential(credential);
-//    User user = result.user;
-//    if (user != null) {
-//      Navigator.push(
-//          context, MaterialPageRoute(builder: (context) => ProfileScreen()));
-//    }
-//    showSnackbar(
-//        "Phone number automatically verified and user signed in: ${_auth.currentUser.uid}");
+/*    UserCredential result = await _auth.signInWithCredential(credential);
+    User user = result.user;
+    if (user != null) {
+      Navigator.push(
+          context, MaterialPageRoute(builder: (context) => ProfileScreen()));
+    }
+    showSnackbar(
+        "Phone number automatically verified and user signed in: ${_auth.currentUser.uid}");*/
   }
 
   void _onVerificationFailed(FirebaseAuthException e) {
