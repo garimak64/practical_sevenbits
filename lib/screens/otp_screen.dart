@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:practical_7bits/profile_screen.dart';
+import 'package:practical_7bits/screens/profile_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final phoneNumber;
